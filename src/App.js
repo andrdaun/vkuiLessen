@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   AppRoot,
   SplitLayout,
@@ -8,17 +8,27 @@ import {
   PanelHeader,
   Header,
   Group,
-  SimpleCell,
+  SimpleCell, Cell,
 } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
+import Menu from "./components/Menu";
 
 const App = () => {
+  const [panel, setPanel] = useState('home')
   return (
       <AppRoot>
         <SplitLayout header={<PanelHeader separator={false} />}>
-          <SplitCol autoSpaced>
-            <View activePanel="main">
-              <Panel id="main">
+          <SplitCol>{Menu.map((item) => {
+            return <Cell key = {item.id} before={item.icon} onClick={() => {setPanel(item.id)}}>{item.title}</Cell>
+          })}</SplitCol><SplitCol autoSpaced>
+            <View activePanel={panel}>
+              <Panel id= 'work'>
+                <div>Это место для работы</div>
+              </Panel>
+              <Panel id= 'car'>
+                <div>Это место для машины</div>
+              </Panel>
+              <Panel id= 'home'>
                 <PanelHeader>VKUI</PanelHeader>
                 <Group header={<Header mode="secondary">Items</Header>}>
                   <SimpleCell>Hello</SimpleCell>
