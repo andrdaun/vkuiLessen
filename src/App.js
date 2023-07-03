@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import {
+  AppRoot,
+  SplitLayout,
+  SplitCol,
+  View,
+  Panel,
+  PanelHeader,
+  Header,
+  Group,
+  SimpleCell,
+} from '@vkontakte/vkui';
+import '@vkontakte/vkui/dist/vkui.css';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <AppRoot>
+        <SplitLayout header={<PanelHeader separator={false} />}>
+          <SplitCol autoSpaced>
+            <View activePanel="main">
+              <Panel id="main">
+                <PanelHeader>VKUI</PanelHeader>
+                <Group header={<Header mode="secondary">Items</Header>}>
+                  <SimpleCell>Hello</SimpleCell>
+                  <SimpleCell>World</SimpleCell>
+                </Group>
+              </Panel>
+            </View>
+          </SplitCol>
+        </SplitLayout>
+      </AppRoot>
   );
-}
+};
 
 export default App;
