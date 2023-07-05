@@ -15,6 +15,7 @@ import Menu from "./components/Menu";
 import {ImageContainer} from "./components/ImageContainer";
 import ToDoList from "./components/ToDoList";
 import './App.css';
+import WorkCases from "./components/WorkCases";
 
 const App = () => {
   const [panel, setPanel] = useState('home');
@@ -39,9 +40,9 @@ const App = () => {
         <SplitLayout header={<PanelHeader separator={true} />}>
           <SplitCol maxWidth='200px' fixed={true} width={200}>
             <Group className='navigation-menu'>
-            {Menu.map((item) => {
-            return <Cell key = {item.id} before={item.icon} onClick={() => {setPanel(item.id)}}>{item.title}</Cell>
-          })}
+              {Menu.map((item) => {
+                return <Cell key = {item.id} before={item.icon} onClick={() => {setPanel(item.id)}}>{item.title}</Cell>
+              })}
             </Group>
             <View activePanel={panel}>
               <Panel id='home'>
@@ -51,7 +52,14 @@ const App = () => {
           <SplitCol autoSpaced>
             <View activePanel={panel}>
               <Panel id='work'>
-                <div>Это место для работы</div>
+                <PanelHeader>
+                  Это места для работы
+                </PanelHeader>
+                {WorkCases.map((item) => {
+                  return <Cell key={item.id} before={item.icon} onClick={() => {setPanel(item.id)}}>
+                    {item.title}
+                  </Cell>
+                })}
               </Panel>
               <Panel id='car'>
                 <PanelHeader>
