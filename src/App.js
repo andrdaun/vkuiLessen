@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   AppRoot,
   SplitLayout,
@@ -16,6 +16,9 @@ import {ImageContainer} from "./components/ImageContainer";
 import ToDoList from "./components/ToDoList";
 import './App.css';
 import WorkCases from "./components/WorkCases";
+import {User} from "./components/User";
+import bridge from "@vkontakte/vk-bridge";
+import Friends from "./components/Friends";
 
 const App = () => {
   const [panel, setPanel] = useState('home');
@@ -27,6 +30,45 @@ const App = () => {
     'Закомитить',
     'Запушить',
   ]);
+const [user, setUser] = useState(null);
+const [token, setToken] = useState('');
+const [friends, setFriends] = useState([]);
+
+  useEffect(() => {
+    bridge.send('VKWebAppGetAuthToken', {
+      app_id: 51696656,
+      scope: 'friends,status'
+    })
+        .then((data) => {
+          if (data.access_token) {
+            setToken(data.access_token)
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+  }, [])
+
+  useEffect(() => {
+    if(token) {
+      bridge.send('VKWebAppCallAPIMethod', {
+        method: 'friends.get',
+        params: {
+          access_token: token,
+          v: '5.131',
+          user_id: 508868218,
+          fields: 'nickname,photo_100,domain'
+        },
+
+      })
+          .then((data) => {
+            setFriends(data.response.items)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    }
+  },[token])
 
   const onDragFinish = ({ from, to }) => {
     const _list = [...draggingList];
@@ -35,9 +77,12 @@ const App = () => {
     updateDraggingList(_list);
   };
 
+useEffect(() => {
+  console.log(panel)
+}, [panel])
   return (
       <AppRoot>
-        <SplitLayout header={<PanelHeader separator={true} />}>
+        <SplitLayout>
           <SplitCol maxWidth='200px' fixed={true} width={200}>
             <Group className='navigation-menu'>
               {Menu.map((item) => {
@@ -52,9 +97,6 @@ const App = () => {
           <SplitCol autoSpaced>
             <View activePanel={panel}>
               <Panel id='work'>
-                <PanelHeader>
-                  Это места для работы
-                </PanelHeader>
                 {WorkCases.map((item) => {
                   return <Cell key={item.id} before={item.icon} onClick={() => {setPanel(item.id)}}>
                     {item.title}
@@ -62,23 +104,15 @@ const App = () => {
                 })}
               </Panel>
               <Panel id='car'>
-                <PanelHeader>
                   Это «Audi a6», которая мне понравилась.
-                </PanelHeader>
                 <ImageContainer/>
               </Panel>
+              <Panel id='friends'>
+                <Friends friends={friends} accessToken={token}/>
+              </Panel>
               <Panel id='home'>
-              <PanelHeader>
-                Список
-              </PanelHeader>
-              <Group>
-                <List>
-                  {draggingList.map((item) => (
-                      <Cell key={item} draggable onDragFinish={onDragFinish}>
-                        {item}
-                      </Cell>
-                  ))}
-                </List>
+                <Group>
+                <User user={user}/>
               </Group>
             </Panel>
             </View>

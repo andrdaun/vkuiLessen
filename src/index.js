@@ -7,6 +7,9 @@ import {
     AdaptivityProvider,
     ConfigProvider,
 } from '@vkontakte/vkui';
+import bridge from '@vkontakte/vk-bridge';
+
+bridge.send("VKWebAppInit");
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,6 +21,8 @@ root.render(
       </ConfigProvider>,
   </React.StrictMode>
 );
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
