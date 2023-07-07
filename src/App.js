@@ -19,6 +19,7 @@ import WorkCases from "./components/WorkCases";
 import {User} from "./components/User";
 import bridge from "@vkontakte/vk-bridge";
 import Friends from "./components/Friends";
+import Pabliki from "./components/Pabliki";
 
 const App = () => {
   const [panel, setPanel] = useState('home');
@@ -33,11 +34,12 @@ const App = () => {
 const [user, setUser] = useState(null);
 const [token, setToken] = useState('');
 const [friends, setFriends] = useState([]);
+const [manager, setManager] = useState([]);
 
   useEffect(() => {
     bridge.send('VKWebAppGetAuthToken', {
       app_id: 51696656,
-      scope: 'friends,status'
+      scope: 'friends,status, groups'
     })
         .then((data) => {
           if (data.access_token) {
@@ -56,13 +58,35 @@ const [friends, setFriends] = useState([]);
         params: {
           access_token: token,
           v: '5.131',
-          user_id: 508868218,
+          user_id: '',
           fields: 'nickname,photo_100,domain'
         },
 
       })
           .then((data) => {
             setFriends(data.response.items)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    }
+  },[token])
+
+  useEffect(() => {
+    if(token) {
+      bridge.send('VKWebAppCallAPIMethod', {
+        method: 'groups.get',
+        params: {
+          access_token: token,
+          v: '5.131',
+          user_id: '',
+          extended: 1,
+          fields: 'name, screen_name, photo_100'
+        },
+
+      })
+          .then((data) => {
+            setManager(data.response.items)
           })
           .catch((error) => {
             console.log(error);
@@ -109,6 +133,9 @@ useEffect(() => {
               </Panel>
               <Panel id='friends'>
                 <Friends friends={friends} accessToken={token}/>
+              </Panel>
+              <Panel id='manager'>
+                <Pabliki manager={manager} accessToken={token}/>
               </Panel>
               <Panel id='home'>
                 <Group>
