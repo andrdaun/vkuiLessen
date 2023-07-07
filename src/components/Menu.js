@@ -16,6 +16,10 @@ const Menu = [{
     id: 'friends',
     title: 'Друзья',
     icon: <Icon24Users width={30} height={30}/>
+},{
+    id: 'manager',
+    title: 'Сообщества',
+    icon: <Icon12ArrowDown width={30} height={30} />
 }];
 
 export default Menu;
