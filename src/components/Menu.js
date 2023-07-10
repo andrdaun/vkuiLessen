@@ -1,6 +1,5 @@
 import {
   Icon12ArrowDown,
-  Icon12ArrowUp,
   Icon24List,
   Icon24Users,
   Icon24WorkOutline,

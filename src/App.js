@@ -32,6 +32,7 @@ const App = () => {
   const [token, setToken] = useState("");
   const [friends, setFriends] = useState([]);
   const [manager, setManager] = useState([]);
+  const [scheme, setScheme] = useState("vkcom_light"); // space_gray bright_light vkcom_light vkcom_dark
 
   useEffect(() => {
     bridge
@@ -47,6 +48,12 @@ const App = () => {
       .catch((error) => {
         console.log(error);
       });
+
+    bridge.subscribe((e) => {
+      if (e.detail.type === "VKWebAppUpdateConfig") {
+        setScheme(e.detail.data.scheme);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -104,29 +111,36 @@ const App = () => {
   }, [panel]);
   return (
     <AppRoot>
-      <SplitLayout>
+      <SplitLayout className="container">
         <SplitCol maxWidth="200px" fixed={true} width={200}>
           <Group className="navigation-menu">
-            {Menu.map((item) => {
-              return (
-                <Cell
-                  key={item.id}
-                  before={item.icon}
-                  onClick={() => {
-                    setPanel(item.id);
-                  }}
-                >
-                  {item.title}
-                </Cell>
-              );
-            })}
+            {Menu.map((item) => (
+              <Cell
+                key={item.id}
+                before={item.icon}
+                className={
+                  item.id === panel
+                    ? `${
+                        scheme === "bright_light" || scheme === "vkcom_light"
+                          ? "selected-light"
+                          : "selected-dark"
+                      } br-8`
+                    : "br-8"
+                }
+                onClick={() => {
+                  setPanel(item.id);
+                }}
+              >
+                {item.title}
+              </Cell>
+            ))}
           </Group>
-          <View activePanel={panel}>
-            <Panel id="home"></Panel>
-          </View>
         </SplitCol>
         <SplitCol autoSpaced>
           <View activePanel={panel}>
+            <Panel id="home">
+              <div className="home-panel">Выберите пункт меню</div>
+            </Panel>
             <Panel id="work">
               {WorkCases.map((item) => {
                 return (
@@ -156,10 +170,8 @@ const App = () => {
                 before={<ManagerList manager={manager} accessToken={token} />}
               ></Cell>
             </Panel>
-            <Panel id="home">
-              <Group>
-                <User user={user} />
-              </Group>
+            <Panel id="user">
+              <User user={user} />
             </Panel>
           </View>
         </SplitCol>
